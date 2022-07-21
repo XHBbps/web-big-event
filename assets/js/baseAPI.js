@@ -10,6 +10,17 @@ $.ajaxPrefilter(function (options) {
     options.headers = {
       Authorization: localStorage.getItem('token') || '',
     };
+  } else {
+    // 不论成功失败都会调用complete
+    options.complete = function (res) {
+      // 在complete函数中 可以使用res.responseJSON拿到服务器响应的数据
+      if (res.responseJSON.status === 1 && res.responseJSON.message === '身份认证失败！') {
+        //   1. 强制清空token
+        //   2. 强制跳转到登录页
+        localStorage.removeItem('token');
+        location.href = '/login.html';
+      }
+    };
   }
   // 不论成功失败都会调用complete
   options.complete = function (res) {
